@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import shutil
+from datetime import datetime
 import pandas as pd
 import streamlit as st
 
@@ -165,7 +167,13 @@ def update_match_score(match_id, s1, s2):
 
 
 def reset_tournament_scores(turnier):
-    """Setzt alle Ergebnisse eines Turniers zurück auf NULL"""
+    """Erstellt ein Backup und setzt dann alle Ergebnisse eines Turniers zurück auf NULL"""
+    # Backup erstellen mit Timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_filename = f"turnier_data_backup_{turnier.replace(' ', '_')}_{timestamp}.db"
+    shutil.copy(DB_FILE, backup_filename)
+    
+    # Ergebnisse zurücksetzen
     conn = get_db_connection()
     c = conn.cursor()
     c.execute(
@@ -174,6 +182,8 @@ def reset_tournament_scores(turnier):
     )
     conn.commit()
     conn.close()
+    
+    return backup_filename
 
 
 def calculate_table(matches_df):
@@ -463,8 +473,9 @@ elif modus == "✏️ Ergebniseingabe (Schiedsrichter)":
         col_reset, col_spacer = st.columns([1, 4])
         with col_reset:
             if st.button("Alle Ergebnisse löschen", type="secondary"):
-                reset_tournament_scores(turnier_auswahl)
+                backup_file = reset_tournament_scores(turnier_auswahl)
                 st.success(f"✅ Tabelle für '{turnier_auswahl}' wurde zurückgesetzt!")
+                st.info(f"💾 Backup erstellt: `{backup_file}`")
                 st.rerun()
 
     elif pin_input != "":
