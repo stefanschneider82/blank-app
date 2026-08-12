@@ -293,7 +293,7 @@ with st.sidebar:
 col_logo, col_title = st.columns([1, 5])
 with col_logo:
     if os.path.exists(logo_path):
-        st.image(logo_path, width=110)
+        st.image(logo_path, use_column_width=True)
     else:
         st.markdown("### 🤾‍♂️")
 
