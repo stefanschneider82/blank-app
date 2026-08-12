@@ -421,12 +421,28 @@ elif modus == "✏️ Ergebniseingabe (Schiedsrichter)":
                 "💾 Alle Ergebnisse Jetzt Speichern"
             )
             if submitted:
+                updated_count = 0
                 for idx, row in matches_df.iterrows():
                     new_s1 = st.session_state[f"s1_{row['id']}"]
                     new_s2 = st.session_state[f"s2_{row['id']}"]
-                    update_match_score(row["id"], new_s1, new_s2)
-                st.toast("Alle Ergebnisse wurden erfolgreich gespeichert!")
-                st.rerun()
+                    
+                    # Nur aktualisieren, wenn sich wirklich etwas geändert hat
+                    old_s1 = row["score1"]
+                    old_s2 = row["score2"]
+                    
+                    # Prüfen ob Werte tatsächlich unterschiedlich sind
+                    s1_changed = (pd.isna(old_s1) and new_s1 != 0) or (pd.notnull(old_s1) and int(old_s1) != new_s1)
+                    s2_changed = (pd.isna(old_s2) and new_s2 != 0) or (pd.notnull(old_s2) and int(old_s2) != new_s2)
+                    
+                    if s1_changed or s2_changed:
+                        update_match_score(row["id"], new_s1, new_s2)
+                        updated_count += 1
+                
+                if updated_count > 0:
+                    st.toast(f"{updated_count} Ergebnis(se) aktualisiert!")
+                    st.rerun()
+                else:
+                    st.info("Keine Änderungen erkannt.")
 
     elif pin_input != "":
         st.error("❌ Falsche PIN. Zugriff verweigert.")
