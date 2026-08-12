@@ -277,16 +277,27 @@ with st.sidebar:
 
     st.divider()
 
-    # Logo Uploader im Admin Bereich der Sidebar
+    # Logo Uploader im Admin Bereich der Sidebar (mit PIN-Schutz)
     with st.expander("🖼️ Vereins-Logo verwalten"):
-        uploaded_logo = st.file_uploader(
-            "Neues Logo hochladen (PNG/JPG)", type=["png", "jpg", "jpeg"]
+        logo_pin = st.text_input(
+            "PIN eingeben:",
+            type="password",
+            placeholder="PIN...",
+            key="logo_pin",
         )
-        if uploaded_logo is not None:
-            with open(logo_path, "wb") as f:
-                f.write(uploaded_logo.getbuffer())
-            st.success("Logo aktualisiert! Bitte Seite neu laden.")
-            st.rerun()
+        
+        if logo_pin == DEFAULT_PIN:
+            st.success("✅ Autorisiert!")
+            uploaded_logo = st.file_uploader(
+                "Neues Logo hochladen (PNG/JPG)", type=["png", "jpg", "jpeg"]
+            )
+            if uploaded_logo is not None:
+                with open(logo_path, "wb") as f:
+                    f.write(uploaded_logo.getbuffer())
+                st.success("Logo aktualisiert! Bitte Seite neu laden.")
+                st.rerun()
+        elif logo_pin:
+            st.error("❌ Falsche PIN!")
 
 
 # Main Title Header
