@@ -164,6 +164,18 @@ def update_match_score(match_id, s1, s2):
     conn.close()
 
 
+def reset_tournament_scores(turnier):
+    """Setzt alle Ergebnisse eines Turniers zurück auf NULL"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute(
+        "UPDATE matches SET score1 = NULL, score2 = NULL WHERE turnier = ?",
+        (turnier,),
+    )
+    conn.commit()
+    conn.close()
+
+
 def calculate_table(matches_df):
     stats = {}
 
@@ -443,6 +455,17 @@ elif modus == "✏️ Ergebniseingabe (Schiedsrichter)":
                     st.rerun()
                 else:
                     st.info("Keine Änderungen erkannt.")
+
+        st.divider()
+        
+        # Reset Button
+        st.markdown("### 🔄 Tabelle zurücksetzen")
+        col_reset, col_spacer = st.columns([1, 4])
+        with col_reset:
+            if st.button("Alle Ergebnisse löschen", type="secondary"):
+                reset_tournament_scores(turnier_auswahl)
+                st.success(f"✅ Tabelle für '{turnier_auswahl}' wurde zurückgesetzt!")
+                st.rerun()
 
     elif pin_input != "":
         st.error("❌ Falsche PIN. Zugriff verweigert.")
