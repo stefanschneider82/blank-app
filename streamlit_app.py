@@ -252,7 +252,7 @@ logo_path = "logo.png"
 # Sidebar Branding
 with st.sidebar:
     if os.path.exists(logo_path):
-        st.image(logo_path, use_column_width=True)
+        st.image(logo_path, use_container_width=True)
     else:
         # Platzhalter Logo / Header
         st.markdown(
