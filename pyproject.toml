@@ -1,5 +1,5 @@
 [project]
-name = "tss-handballturnier"
+name = "blank-app-template"
 version = "0.1.0"
 description = "A simple tournament management app for handball tournaments."
 readme = "README.md"
