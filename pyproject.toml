@@ -1,7 +1,7 @@
 [project]
-name = "blank-app-template"
+name = "tss-handballturnier"
 version = "0.1.0"
-description = "A simple Streamlit app template."
+description = "A simple tournament management app for handball tournaments."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
